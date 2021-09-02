@@ -4,12 +4,16 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    private float horizontalInput;
-    private float verticalInput;
+    public GameObject camCentrePoint;
 
-    public float speed;
+    public float playerSpeed;
+    public float camRotSpeed;
 
     public int freezeTime;
+
+    private float horizontalInput;
+    private float verticalInput;
+    private float horizontalCamInput;
 
     // Start is called before the first frame update
     void Start()
@@ -20,11 +24,9 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        horizontalInput = Input.GetAxis("Horizontal");
-        verticalInput = Input.GetAxis("Vertical");
-
-        transform.Translate(Vector3.forward * verticalInput * speed * Time.deltaTime);
-        transform.Translate(Vector3.right * horizontalInput * speed * Time.deltaTime);
+        // Abstraction
+        MoveCamera();
+        MovePlayer();
     }
 
     // Could do that you pass in a wait time parameter from dancers?
@@ -37,7 +39,28 @@ public class PlayerController : MonoBehaviour
     IEnumerator FreezeCoroutine()
     {
         yield return new WaitForSeconds(freezeTime);
+        Debug.Log("Freeze!");
     }
 
+    // Abstraction
+    private void MovePlayer()
+    {
+        horizontalInput = Input.GetAxis("Horizontal");
+        verticalInput = Input.GetAxis("Vertical");
 
+        transform.Translate(camCentrePoint.transform.forward * verticalInput * playerSpeed * Time.deltaTime);
+        transform.Translate(camCentrePoint.transform.right * horizontalInput * playerSpeed * Time.deltaTime);
+    }
+
+    private void MoveCamera()
+    {
+        horizontalCamInput = Input.GetAxis("HorizontalArrows");
+
+        camCentrePoint.transform.Rotate(Vector3.up, -horizontalCamInput * camRotSpeed * Time.deltaTime);
+    }
+
+    public void ActivatePowerUp()
+    {
+
+    }
 }
